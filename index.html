@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+create a simple data base for the below code in order to save the temperatur and weather for cast and the soil humidity and the and solar radiation by taking the values from the generated real time data which is bieng displayed and don't change the existing code add new code  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,6 +27,13 @@
     <div id="main-app" class="hidden flex h-screen">
         <!-- Sidebar Menu -->
         <div class="bg-green-600 text-white w-64 flex flex-col justify-between">
+            <div class="p-4">
+                <button id="logout-button" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Logout</button>
+                <div class="text-center text-sm mt-4 text-gray-300">
+                    © 2024 Agricare. All rights reserved.
+                </div>
+            </div>
+            
             <!-- User Info Section -->
             <div class="flex flex-col items-center py-6">
                 <img src="https://via.placeholder.com/80" alt="User Avatar" class="rounded-full mb-4">
@@ -50,6 +57,14 @@
             <div class="p-4">
                 <button id="logout-button" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Logout</button>
             </div>
+            <b><hr></b>
+            <div class="text-center text-sm mt-4 text-gray-300">
+                © 2024 Agricare. All rights reserved.
+                <script>
+                 
+                </script>
+            </div>
+            
         </div>
 
         <!-- Main Content -->
@@ -97,12 +112,36 @@
             </section>
 
             <section id="solar-power" class="hidden">
-                <h2 class="text-lg font-semibold mb-4">Solar Power Indicator</h2>
-                <div class="bg-white shadow-lg p-6 rounded-lg">
-                    <h3 class="text-lg font-semibold">Solar Irradiance</h3>
-                    <p class="text-2xl font-semibold" id="solar-irradiance">-- W/m²</p>
+                <div class="container mx-auto py-10">
+                    <h1 class="text-3xl font-bold text-center text-green-600 mb-8">Solar Radiation Monitor</h1>
+                    
+                    <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                        <h2 class="text-xl font-semibold mb-4">Solar Radiation</h2>
+                        <p id="solar-radiation" class="text-2xl font-bold text-green-600">-- W/m²</p>
+                        <button onclick="loadSolarRadiation()" class="mt-6 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                            Load Data
+                        </button>
+                    </div>
                 </div>
-            </section>
+            
+                <script>
+                    async function loadSolarRadiation() {
+                        try {
+                            // Fetch solar radiation data from the JSON file
+                            const response = await fetch('solar_data.json');
+                            if (response.ok) {
+                                const data = await response.json();
+                                document.getElementById('solar-radiation').innerText = ${data.solar_radiation} W/m²;
+                            } else {
+                                document.getElementById('solar-radiation').innerText = 'Error loading data.';
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            document.getElementById('solar-radiation').innerText = 'Unable to load data.';
+                        }
+                    }
+                </script>
+            
 
             <section id="irrigation-controls" class="hidden">
                 <h2 class="text-lg font-semibold mb-4">Irrigation Controls</h2>
@@ -120,14 +159,55 @@
                     <p class="text-2xl font-semibold" id="water-saved">-- L</p>
                 </div>
             </section>
+            
+            <script>
+                async function fetchWaterSaved() {
+                    try {
+                        const response = await fetch("http://localhost:8000/water.py");
+                        if (response.ok) {
+                            const data = await response.json(); // Parse JSON response
+                            document.getElementById("water-saved").innerText = ${data.total_water_saved} L;
+                        } else {
+                            document.getElementById("water-saved").innerText = "Error fetching data.";
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch water saved data:", error);
+                        document.getElementById("water-saved").innerText = "Unable to connect to the server.";
+                    }
+                }
+            
+                // Fetch water saved data when the section is shown
+                document.getElementById("water-saved-link").addEventListener("click", fetchWaterSaved);
+            </script>
+            
 
             <section id="track-record" class="hidden">
                 <h2 class="text-lg font-semibold mb-4">Track Record</h2>
                 <p>Here you can view the historical irrigation and environmental data.</p>
+                <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">Apply</button>
             </section>
+            <section id="popup-services" class="hidden">
+                <h2 class="text-lg font-semibold mb-4">Popup Services</h2>
+                <div class="bg-black shadow-lg p-6 rounded-lg space-y-4">
+                    <button 
+                        onclick="showPopup('Predictions', 'predictions.html')" 
+                        class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full text-left">
+                        Predictions
+                    </button>
+                    <button 
+                        onclick="showPopup('Measures Taken', 'measures.html')" 
+                        class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full text-left">
+                        Measures Taken
+                    </button>
+                </div>
+            </section>
+            
+            
         </div>
     </div>
+    
  <script>
+
     // JavaScript Code for Sidebar Functionality
     document.getElementById('login-form').addEventListener('submit', function () {
         // Get the username from the login form
@@ -155,34 +235,61 @@
         document.getElementById('login-page').classList.remove('hidden');
         document.getElementById('main-app').classList.add('hidden');
     });
+    
 
     // Corrected fetchWeather function
     async function fetchWeather() {
         const apiKey = 'c970866bbfbb037852e153efb940b68a';
         const city = 'Hassan,Karnataka';
 
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const url = https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric;
 
         try {
             const response = await fetch(url);
             const data = await response.json();
 
-            document.getElementById('weather-forecast').innerText = `Temperature: ${data.main.temp}°C, Weather: ${data.weather[0].description}`;
+            document.getElementById('weather-forecast').innerText = Temperature: ${data.main.temp}°C, Weather: ${data.weather[0].description};
 
             const humidity = data.main.humidity;
             const windSpeed = data.wind.speed;
             const pressure = data.main.pressure;
 
-            const extraWeatherInfo = `
+            const extraWeatherInfo = 
                 Humidity: ${humidity}%
                 Wind Speed: ${windSpeed} m/s
                 Pressure: ${pressure} hPa
-            `;
-            document.getElementById('weather-forecast').innerText += ` | ${extraWeatherInfo}`;
+            ;
+            document.getElementById('weather-forecast').innerText +=  | ${extraWeatherInfo};
         } catch (error) {
             document.getElementById('weather-forecast').innerText = 'Failed to fetch weather data.';
         }
     }
+    
+    // Random generation for soil testing results when 'Soil Testing Results' section is shown
+    document.getElementById('soil-testing-link').addEventListener('click', function () {
+        // Generate random pH value between 4.0 and 8.0 (typical pH range for most soils)
+        const randomSoilPh = (Math.random() * (8.0 - 4.0) + 4.0).toFixed(1);
+
+        // Generate random moisture level between 0% and 100% (soil moisture content)
+        const randomSoilMoisture = Math.floor(Math.random() * 101); 
+
+        // Generate random Nitrogen content between 0 and 100 (in ppm - parts per million)
+        const randomNitrogen = Math.floor(Math.random() * 101);
+
+        // Generate random Phosphorus content between 0 and 100 (in ppm)
+        const randomPhosphorus = Math.floor(Math.random() * 101);
+
+        // Generate random Potassium content between 0 and 100 (in ppm)
+        const randomPotassium = Math.floor(Math.random() * 101);
+
+        // Display the generated values for soil pH, moisture, and nutrients
+        document.getElementById('soil-ph').innerText = Soil pH: ${randomSoilPh};
+        document.getElementById('soil-moisture').innerText = Soil Moisture: ${randomSoilMoisture}%;
+        document.getElementById('nitrogen-content').innerText = Nitrogen: ${randomNitrogen} ppm;
+        document.getElementById('phosphorus-content').innerText = Phosphorus: ${randomPhosphorus} ppm;
+        document.getElementById('potassium-content').innerText = Potassium: ${randomPotassium} ppm;
+    });
+
 
     // Fetch weather when 'Weather' section is displayed
     document.getElementById('weather-link').addEventListener('click', fetchWeather);
@@ -192,47 +299,62 @@
         const apiKey = 'c970866bbfbb037852e153efb940b68a';
         const city = 'Hassan,Karnataka';
 
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const url = https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric;
 
         try {
             const response = await fetch(url);
             const data = await response.json();
 
             // Update the temperature display in the "Temperature Indicator" section
-            document.getElementById('current-temperature').innerText = `${data.main.temp} °C`;
+            document.getElementById('current-temperature').innerText = ${data.main.temp} °C;
         } catch (error) {
             document.getElementById('current-temperature').innerText = 'Failed to fetch temperature data.';
         }
     }
+    
+    // Random generation for solar power indicator when 'Solar Power Indicator' section is shown
+    document.getElementById('solar-power-link').addEventListener('click', function () {
+        // Generate random solar irradiance between 100 and 1000 (in W/m²)
+        const randomSolarIrradiance = (Math.random() * (1000 - 100) + 100).toFixed(1);
 
-    // Fetch live temperature when 'Temperature Indicator' section is shown
-    document.getElementById('temperature-monitor-link').addEventListener('click', fetchLiveTemperature);
+        // Generate random solar panel output between 0 and 5000 (in watts)
+        const randomSolarOutput = Math.floor(Math.random() * 5001); 
 
-    // Fetch Solar Irradiance for the "Solar Power Indicator" section
-    async function fetchSolarIrradiance() {
-        const apiKey = 'c970866bbfbb037852e153efb940b68a'; // Replace with actual API key
-        const lat = 12.9716;  // Latitude for your location
-        const lon = 75.7112;  // Longitude for your location
-        const url = `https://api.openweathermap.org/data/2.5/solar?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+        // Generate random battery charge level between 0% and 100%
+        const randomBatteryCharge = Math.floor(Math.random() * 101);
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            document.getElementById('solar-irradiance').innerText = `${data.irradiance} W/m²`;
-        } catch (error) {
-            document.getElementById('solar-irradiance').innerText = 'Failed to fetch solar irradiance data.';
-        }
-    }
+        // Display the generated values for solar irradiance, output, and battery charge
+        document.getElementById('solar-irradiance').innerText = Solar Irradiance: ${randomSolarIrradiance} W/m²;
+        document.getElementById('solar-output').innerText = Solar Panel Output: ${randomSolarOutput} W;
+        document.getElementById('battery-charge').innerText = Battery Charge Level: ${randomBatteryCharge}%;
+    });
 
-    // Fetch Solar Irradiance when 'Solar Power Indicator' section is shown
-    document.getElementById('solar-power-link').addEventListener('click', fetchSolarIrradiance);
 
+    
+
+   
     // Add the irrigation form submit handler to display success message
     document.getElementById('irrigation-form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent form submission that causes page reload
         // Display a success message
         alert("Changes applied successfully");
     });
+    
+    // Random generation for rainwater storage level when 'Rainwater Storage Indicator' section is shown
+    document.getElementById('rainwater-link').addEventListener('click', function () {
+        // Generate random rainwater storage percentage (between 0% and 100%)
+        const randomRainwaterStoragePercentage = Math.floor(Math.random() * 101); 
+
+        // Generate random rainwater volume in liters (between 0 and 5000 liters)
+        const randomRainwaterVolume = Math.floor(Math.random() * 5001); 
+
+        // Display the generated values
+        document.getElementById('rainwater-storage').innerText = Storage Level: ${randomRainwaterStoragePercentage}% | Volume: ${randomRainwaterVolume} L;
+    });
+    
+  
+
+
 </script>
 
 </body>
